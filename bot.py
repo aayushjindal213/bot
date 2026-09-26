@@ -2,7 +2,7 @@ import os
 import asyncio
 from aiohttp import web
 from telegram import Update, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ChatMemberHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import logging
 
 # Logging setup
@@ -110,9 +110,10 @@ async def start_web_server():
 async def main():
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # Handlers add karein (Auto-approve function yahan se hata diya gaya hai)
+    # Handlers add karein
     application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(ChatJoinRequestHandler(handle_join_request))
+    # Yahan update filter use kiya hai jisse koi import error nahi aayegi
+    application.add_handler(MessageHandler(filters.UpdateType.CHAT_JOIN_REQUEST, handle_join_request))
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
 
     print("Multi-channel bot start ho raha hai...")
