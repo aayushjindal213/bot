@@ -1,9 +1,9 @@
 import os
 import asyncio
+import logging
 from aiohttp import web
 from telegram import Update, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-import logging
+from telegram.ext import Application, CommandHandler, ChatJoinRequestHandler, MessageHandler, filters, ContextTypes
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -113,8 +113,8 @@ async def main():
     # Handlers add karein
     application.add_handler(CommandHandler("start", start_command))
     
-    # Custom filter ka use kiya gaya hai jo har version mein perfectly chalta hai
-    application.add_handler(MessageHandler(filters.ChatJoinRequest(), handle_join_request))
+    # Sahi handler ka use jo request ko approve kiye bina catch karega
+    application.add_handler(ChatJoinRequestHandler(handle_join_request))
     
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
 
