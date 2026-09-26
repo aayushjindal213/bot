@@ -1,7 +1,7 @@
 import os
 import asyncio
 from aiohttp import web
-from telegram import Update, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from telegram import Update, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, ChatJoinRequestHandler, MessageHandler, filters, ContextTypes
 import logging
 
@@ -35,11 +35,11 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        # User ko DM mein message bhejein
+        # User ko DM mein message bhejein (parse_mode mein string use ki hai)
         await context.bot.send_message(
             chat_id=user_id, 
             text=welcome_message, 
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode="Markdown",
             reply_markup=reply_markup
         )
         print(f"Approved and welcomed {first_name} with custom button in channel ID: {chat_id}")
@@ -52,7 +52,6 @@ async def handle_channel_post(update: Update, context: ContextTypes.DEFAULT_TYPE
     message = update.channel_post
     if message:
         try:
-            # Post par automatically ❤️ reaction bhejna
             await message.set_reaction(reaction=ReactionTypeEmoji("❤️"))
             print(f"Reaction sent to post ID {message.message_id} in channel ID: {message.chat.id}")
         except Exception as e:
