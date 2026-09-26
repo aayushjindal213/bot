@@ -1,51 +1,46 @@
 import os
 import asyncio
 from aiohttp import web
-from telegram import Update
+from telegram import Update, ReactionTypeEmoji
 from telegram.ext import Application, ChatJoinRequestHandler, MessageHandler, filters, ContextTypes
 import logging
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# Environment variables se token aur channel ID lena
+# Sirf Bot Token ki zarurat hai
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token_here")
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", -1001234567890))
 WELCOME_TEXT = "Hello! Aapka channel par swagat hai."
 
-# 1. Join Request aane par approve karke DM mein welcome message bhejna
+# 1. Kisi bhi channel par Join Request aane par approve karke DM mein welcome message bhejna
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.chat_join_request.from_user.id
     chat_id = update.chat_join_request.chat.id
     first_name = update.chat_join_request.from_user.first_name
 
-    if chat_id == CHANNEL_ID:
-        try:
-            await context.bot.approve_chat_join_request(chat_id=chat_id, user_id=user_id)
-            await context.bot.send_message(chat_id=user_id, text=f"{first_name}, {WELCOME_TEXT}")
-            print(f"Approved and welcomed: {first_name}")
-        except Exception as e:
-            print(f"Error handling join request: {e}")
+    try:
+        # Join request approve karein
+        await context.bot.approve_chat_join_request(chat_id=chat_id, user_id=user_id)
+        # User ko DM mein welcome message bhejein
+        await context.bot.send_message(chat_id=user_id, text=f"{first_name}, {WELCOME_TEXT}")
+        print(f"Approved and welcomed {first_name} in channel ID: {chat_id}")
+    except Exception as e:
+        print(f"Error handling join request: {e}")
 
-# 2. Channel par naye post par action (reply/notification) ke liye
+# 2. Bot jis bhi channel mein admin ho, wahan nayi post par Auto-Reaction (❤️) dena
 async def handle_channel_post(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.channel_post.chat.id
-    if chat_id == CHANNEL_ID:
+    message = update.channel_post
+    if message:
         try:
-            message_id = update.channel_post.message_id
-            # Bot channel post par comment/reply bhej sakta hai
-            await context.bot.send_message(
-                chat_id=CHANNEL_ID,
-                text="New post published!",
-                reply_to_message_id=message_id
-            )
-            print(f"Responded to post ID: {message_id}")
+            # Post par automatically ❤️ reaction bhejna
+            await message.set_reaction(reaction=ReactionTypeEmoji("❤️"))
+            print(f"Reaction sent to post ID {message.message_id} in channel ID: {message.chat.id}")
         except Exception as e:
-            print(f"Error in channel post: {e}")
+            print(f"Error sending reaction: {e}")
 
-# Render ke liye Dummy Web Server (Port error hatane ke liye)
+# Render ke liye Dummy Web Server
 async def handle(request):
-    return web.Response(text="Bot is running 24x7!")
+    return web.Response(text="Multi-channel bot is running 24x7!")
 
 async def start_web_server():
     app = web.Application()
@@ -59,18 +54,18 @@ async def start_web_server():
 async def main():
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # Handlers add karein
+    # Yeh handlers bina kisi specific channel ID ke, har us channel par kaam karenge jahan bot admin hai
     application.add_handler(ChatJoinRequestHandler(handle_join_request))
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
 
-    print("Bot start ho raha hai...")
+    print("Multi-channel bot start ho raha hai...")
     await application.initialize()
     await application.start()
     await application.updater.start_polling()
 
-    # Web server start karein
+    # Web server start karein taaki Render par deployment fail na ho
     await start_web_server()
-    await asyncio.Event().wait()
+    asyncio.Event().wait()
 
 if __name__ == "__main__":
     asyncio.run(main())
