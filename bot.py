@@ -7,7 +7,7 @@ from pyrogram.raw.types import ReactionEmoji
 # Apni details yahan bharein
 API_ID = 12345678  # Apni API ID yahan dalein (Integer)
 API_HASH = "your_api_hash_here"
-BOT_TOKEN = "your_bot_token_here"
+BOT_TOKEN = "8767028136:AAE1ALaRnNwA74IVKiE3O5qohh8IfDEEbj4"
 CHANNEL_ID = -1001234567890  # Apne Channel ki ID yahan dalein (Negative hoti hai)
 WELCOME_TEXT = "Hello! Aapka channel par swagat hai. Kripya rules padhein."
 
