@@ -6,11 +6,11 @@ from pyrogram.types import ChatJoinRequest
 from pyrogram.raw import functions
 from pyrogram.raw.types import ReactionEmoji
 
-# Apni details yahan dalein ya Render ke Environment Variables use karein
-API_ID = int(os.environ.get("API_ID", "12345678"))  # Apni API ID
-API_HASH = os.environ.get("API_HASH", "your_api_hash")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token")
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1001234567890"))
+# Yahan apni real API_ID aur API_HASH dalein (my.telegram.org se milegi)
+API_ID = int(os.environ.get("API_ID", 12345678))  # Apni real integer API ID dalein
+API_HASH = os.environ.get("API_HASH", "apna_api_hash_yahan_dalein")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8767028136:AAE1ALaRnNwA74IVKiE3O5qohh8IfDEEbj4")
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", -1001234567890)) # Apne channel ki ID
 WELCOME_TEXT = "Hello! Aapka channel par swagat hai."
 
 # Pyrogram Client initialize karein
@@ -46,7 +46,7 @@ async def auto_react(client, message):
     except Exception as e:
         print(f"Error in auto reaction: {e}")
 
-# Render Web Service ke liye Dummy HTTP Server (Port error hatane ke liye)
+# Render Web Service ke liye Dummy HTTP Server
 async def handle(request):
     return web.Response(text="Bot is running 24x7!")
 
