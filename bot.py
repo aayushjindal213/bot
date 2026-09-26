@@ -2,7 +2,7 @@ import os
 import asyncio
 from aiohttp import web
 from telegram import Update, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ChatJoinRequestHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler, ChatMemberHandler, MessageHandler, filters, ContextTypes
 import logging
 
 # Logging setup
@@ -51,37 +51,38 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-# 1. Join Request aane par approve karke stylish welcome message aur button bhejna
+# 1. Join Request aane par APPROVE NAHI HOGA, sirf user ko welcome message aur button jayega
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.chat_join_request.from_user.id
-    chat_id = update.chat_join_request.chat.id
-    first_name = update.chat_join_request.from_user.first_name
+    chat_join_request = update.chat_join_request
+    if chat_join_request:
+        user_id = chat_join_request.from_user.id
+        first_name = chat_join_request.from_user.first_name
+        chat_id = chat_join_request.chat.id
 
-    try:
-        await context.bot.approve_chat_join_request(chat_id=chat_id, user_id=user_id)
-        
-        welcome_message = (
-            f"✅ **Hello {first_name}** 🎉\n"
-            f"**You Are A PremiuM UseR Now 🧡**\n\n"
-            f"Loss Recovery :- Join Now\n\n"
-            f"Join Here 📌 (EXPIRE IN 5 MINUTES)"
-        )
+        try:
+            welcome_message = (
+                f"✅ **Hello {first_name}** 🎉\n"
+                f"**You Are A PremiuM UseR Now 🧡**\n\n"
+                f"Loss Recovery :- Join Now\n\n"
+                f"Join Here 📌 (EXPIRE IN 5 MINUTES)"
+            )
 
-        keyboard = [
-            [InlineKeyboardButton("📌 Join Channel Now", url="https://t.me/+g6b-NJx0d8BhMjU1")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
+            keyboard = [
+                [InlineKeyboardButton("📌 Join Channel Now", url="https://t.me/+g6b-NJx0d8BhMjU1")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
 
-        await context.bot.send_message(
-            chat_id=user_id, 
-            text=welcome_message, 
-            parse_mode="Markdown",
-            reply_markup=reply_markup
-        )
-        print(f"Approved and welcomed {first_name} with custom button in channel ID: {chat_id}")
-        
-    except Exception as e:
-        print(f"Error handling join request: {e}")
+            # User ko personal message bheja jayega bina request approve kiye
+            await context.bot.send_message(
+                chat_id=user_id, 
+                text=welcome_message, 
+                parse_mode="Markdown",
+                reply_markup=reply_markup
+            )
+            print(f"Sent welcome message to user {first_name} for join request in channel ID: {chat_id}")
+            
+        except Exception as e:
+            print(f"Error sending welcome message on join request: {e}")
 
 # 2. Bot jis bhi channel mein admin ho, wahan nayi post par Auto-Reaction (❤️) dena
 async def handle_channel_post(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -109,7 +110,7 @@ async def start_web_server():
 async def main():
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # Handlers add karein
+    # Handlers add karein (Auto-approve function yahan se hata diya gaya hai)
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(ChatJoinRequestHandler(handle_join_request))
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
