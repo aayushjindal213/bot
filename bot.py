@@ -54,7 +54,7 @@ async def start_web_server():
 async def main():
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # Yeh handlers bina kisi specific channel ID ke, har us channel par kaam karenge jahan bot admin hai
+    # Handlers add karein
     application.add_handler(ChatJoinRequestHandler(handle_join_request))
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
 
@@ -63,9 +63,11 @@ async def main():
     await application.start()
     await application.updater.start_polling()
 
-    # Web server start karein taaki Render par deployment fail na ho
+    # Web server start karein
     await start_web_server()
-    asyncio.Event().wait()
+    
+    # Yahan 'await' lagana zaroori hai taaki bot band na ho
+    await asyncio.Event().wait()
 
 if __name__ == "__main__":
     asyncio.run(main())
