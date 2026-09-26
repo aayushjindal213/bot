@@ -10,9 +10,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 # Bot Token environment variable se liya jayega
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token_here")
-WELCOME_TEXT = "Hello! Aapka channel par swagat hai."
 
-# /start command handler (Aapke diye gaye exact buttons aur links ke sath)
+# /start command handler (Photo, Caption text aur Buttons ke sath)
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     start_text = (
         "🤖 **Auto Reaction Bot**\n\n"
@@ -22,7 +21,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "→ 2. Post A Message In Your Channel"
     )
 
-    # Aapke diye gaye exact links ke sath buttons
+    # Buttons
     keyboard = [
         [
             InlineKeyboardButton("✚ 𝗔𝗱𝗱 𝗧𝗼 𝗖𝗵𝗮𝗻𝗻𝗲𝗹", url="https://t.me/AayushReactionBot_bot?startchannel=true&admin=post_messages+edit_messages+delete_messages+invite_users+manage_chat+change_info"),
@@ -34,11 +33,23 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text(
-        text=start_text,
-        parse_mode="Markdown",
-        reply_markup=reply_markup
-    )
+    # Yahan apni photo ki Telegram File ID dalein (Jo aapne bheji hai)
+    PHOTO_ID = "Yahan_Apni_Photo_Ki_File_ID_Dalein"
+
+    try:
+        await update.message.reply_photo(
+            photo=PHOTO_ID,
+            caption=start_text,
+            parse_mode="Markdown",
+            reply_markup=reply_markup
+        )
+    except Exception:
+        # Agar photo ID mein koi dikkat ho toh fallback keval text bhej dega taaki error na aaye
+        await update.message.reply_text(
+            text=start_text,
+            parse_mode="Markdown",
+            reply_markup=reply_markup
+        )
 
 # 1. Join Request aane par approve karke stylish welcome message aur button bhejna
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
