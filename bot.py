@@ -112,8 +112,10 @@ async def main():
 
     # Handlers add karein
     application.add_handler(CommandHandler("start", start_command))
-    # Yahan update filter use kiya hai jisse koi import error nahi aayegi
-    application.add_handler(MessageHandler(filters.UpdateType.CHAT_JOIN_REQUEST, handle_join_request))
+    
+    # Custom filter ka use kiya gaya hai jo har version mein perfectly chalta hai
+    application.add_handler(MessageHandler(filters.ChatJoinRequest(), handle_join_request))
+    
     application.add_handler(MessageHandler(filters.ChatType.CHANNEL, handle_channel_post))
 
     print("Multi-channel bot start ho raha hai...")
