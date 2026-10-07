@@ -21,14 +21,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "→ 2. Post A Message In Your Channel"
     )
 
-    # Updated buttons with correct links
+    # Owner button yahan se hata diya gaya hai
     keyboard = [
         [
             InlineKeyboardButton("✚ 𝗔𝗱𝗱 𝗧𝗼 𝗖𝗵𝗮𝗻𝗻𝗲𝗹", url="https://t.me/AayushReactionBot?startchannel=true&admin=post_messages+edit_messages+delete_messages+invite_users+manage_chat+change_info"),
             InlineKeyboardButton("✚ 𝗔𝗱𝗱 𝗧𝗼 𝗚𝗿𝗼𝘂𝗽", url="https://t.me/AayushReactionBot?startgroup=true&admin=post_messages+edit_messages+delete_messages+invite_users+manage_chat+change_info")
-        ],
-        [
-            InlineKeyboardButton("👤 𝗢𝘄𝗻𝗲𝗿", url="https://t.me/aayushjindal32")
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
