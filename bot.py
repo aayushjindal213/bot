@@ -65,7 +65,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             )
 
             keyboard = [
-                [InlineKeyboardButton("📌 Join Channel Now", url="https://t.me/+g6b-NJx0d8BhMjU1")]
+                [InlineKeyboardButton("📌 Join Channel Now", url="https://t.me/+x0YZDsvuy1tlN2Fl")]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
 
